@@ -108,48 +108,46 @@ def random_bot(board, player_turn, x_img, o_img):
 
 def intelli_bot(board, player_turn, x_img, o_img):
     information = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    coord_x = 0
-    coord_y = 0
 
     for row in range(0, 3):
         for col in range(0, 3):
-            if board[row][col] != player_turn and None:
-                ++information[0][row]
-            if board[row][col] == None:
-                coord_x = row
-                coord_y = col
+            if board[row][col] != player_turn and board[row][col] is not None:
+                information[0][row] += 1
             if information[0][row] == 2:
-                board[coord_x][coord_y] = player_turn
-                return
+                for i in range(0, 3):
+                    if board[row][i] is None:
+                        board[row][i] = player_turn
+                        renderer(board, x_img, o_img)
+                        return
 
     for col in range(0, 3):
         for row in range(0, 3):
-            if board[row][col] != player_turn and None:
-                ++information[1][col]
-            if board[row][col] == None:
-                coord_x = row
-                coord_y = col
+            if board[row][col] != player_turn and board[row][col] is not None:
+                information[1][col] += 1
             if information[1][col] == 2:
-                board[coord_x][coord_y] = player_turn
-                return
+                for i in range(0, 3):
+                    if board[i][col] is None:
+                        board[i][col] = player_turn
+                        renderer(board, x_img, o_img)
+                        return
 
     for diagonal in range(0, 3):
-        if board[diagonal][diagonal] != player_turn and None:
-            ++information[2][0]
-        if board[row][col] == None:
-            coord_x = row
-            coord_y = col
+        if board[diagonal][diagonal] != player_turn and board[diagonal][diagonal] is not None:
+            information[2][0] += 1
         if information[2][0] == 2:
-            board[coord_x][coord_y] = player_turn
-            return
-        if board[diagonal][2 - diagonal] != player_turn and None:
-            ++information[2][1]
-        if board[row][col] == None:
-            coord_x = row
-            coord_y = col
-        if information[0][row] == 2:
-            board[coord_x][coord_y] = player_turn
-            return
+            for i in range(0, 3):
+                if board[i][i] is None:
+                    board[i][i] = player_turn
+                    renderer(board, x_img, o_img)
+                    return
+        if board[diagonal][len(board[0])-1 - diagonal] != player_turn and board[diagonal][len(board[0])-1 - diagonal] is not None:
+            information[2][1] += 1
+        if information[2][1] == 2:
+            for i in range(0, 3):
+                if board[i][len(board[0])-1 - i] is None:
+                    board[i][len(board[0])-1 - i] = player_turn
+                    renderer(board, x_img, o_img)
+                    return
     random_bot(board, player_turn, x_img, o_img)
 
 
@@ -172,7 +170,8 @@ def main():
                     win = check_win(board)
                     win_output(win)
             else:
-                random_bot(board, player_turn, X_IMG, O_IMG)
+                # random_bot(board, player_turn, X_IMG, O_IMG)
+                intelli_bot(board, player_turn, X_IMG, O_IMG)
                 player_turn = change_Turn(player_turn)
                 win = check_win(board)
                 win_output(win)
