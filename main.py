@@ -105,6 +105,7 @@ def random_bot(board, player_turn, x_img, o_img):
     board[random_number1][random_number2] = player_turn
     renderer(board, x_img, o_img)
 
+
 def intelli_bot(board, player_turn, x_img, o_img):
     infomation = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
     coordX = 0
