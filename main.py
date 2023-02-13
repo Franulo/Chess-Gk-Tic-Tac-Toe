@@ -107,48 +107,48 @@ def random_bot(board, player_turn, x_img, o_img):
 
 
 def intelli_bot(board, player_turn, x_img, o_img):
-    infomation = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    coordX = 0
-    coordY = 0
+    information = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    coord_x = 0
+    coord_y = 0
 
     for row in range(0, 3):
         for col in range(0, 3):
             if board[row][col] != player_turn and None:
-                ++infomation[0][row]
+                ++information[0][row]
             if board[row][col] == None:
-                coordX = row
-                coordY = col
-            if infomation[0][row] == 2:
-                board[coordX][coordY] = player_turn
+                coord_x = row
+                coord_y = col
+            if information[0][row] == 2:
+                board[coord_x][coord_y] = player_turn
                 return
 
     for col in range(0, 3):
         for row in range(0, 3):
             if board[row][col] != player_turn and None:
-                ++infomation[1][col]
+                ++information[1][col]
             if board[row][col] == None:
-                coordX = row
-                coordY = col
-            if infomation[1][col] == 2:
-                board[coordX][coordY] = player_turn
+                coord_x = row
+                coord_y = col
+            if information[1][col] == 2:
+                board[coord_x][coord_y] = player_turn
                 return
 
     for diagonal in range(0, 3):
         if board[diagonal][diagonal] != player_turn and None:
-            ++infomation[2][0]
+            ++information[2][0]
         if board[row][col] == None:
-            coordX = row
-            coordY = col
-        if infomation[2][0] == 2:
-            board[coordX][coordY] = player_turn
+            coord_x = row
+            coord_y = col
+        if information[2][0] == 2:
+            board[coord_x][coord_y] = player_turn
             return
         if board[diagonal][2 - diagonal] != player_turn and None:
-            ++infomation[2][1]
+            ++information[2][1]
         if board[row][col] == None:
-            coordX = row
-            coordY = col
-        if infomation[0][row] == 2:
-            board[coordX][coordY] = player_turn
+            coord_x = row
+            coord_y = col
+        if information[0][row] == 2:
+            board[coord_x][coord_y] = player_turn
             return
     random_bot(board, player_turn, x_img, o_img)
 
