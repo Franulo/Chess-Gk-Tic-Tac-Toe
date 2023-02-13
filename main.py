@@ -95,11 +95,21 @@ def win_output(output):
         main()
 
 
-def bot(board, player_turn, x_img, o_img):
+def random_bot(board, player_turn, x_img, o_img):
+    random_number1 = random.randrange(0, len(board))
+    random_number2 = random.randrange(0, len(board))
+
+    while board[random_number1][random_number2] is not None:
+        random_number1 = random.randrange(0, len(board))
+        random_number2 = random.randrange(0, len(board))
+    board[random_number1][random_number2] = player_turn
+    renderer(board, x_img, o_img)
+
+def intelli_bot(board, player_turn, x_img, o_img):
     infomation = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
     coordX = 0
     coordY = 0
-    
+
     for row in range(0, 3):
         for col in range(0, 3):
             if board[row][col] != player_turn and None:
@@ -131,7 +141,7 @@ def bot(board, player_turn, x_img, o_img):
         if infomation[2][0] == 2:
             board[coordX][coordY] = player_turn
             return
-        if board[diagonal][2-diagonal] != player_turn and None:
+        if board[diagonal][2 - diagonal] != player_turn and None:
             ++infomation[2][1]
         if board[row][col] == None:
             coordX = row
@@ -139,15 +149,7 @@ def bot(board, player_turn, x_img, o_img):
         if infomation[0][row] == 2:
             board[coordX][coordY] = player_turn
             return
-
-    random_number1 = random.randrange(0, len(board))
-    random_number2 = random.randrange(0, len(board))
-
-    while board[random_number1][random_number2] is not None:
-        random_number1 = random.randrange(0, len(board))
-        random_number2 = random.randrange(0, len(board))
-    board[random_number1][random_number2] = player_turn
-    renderer(board, x_img, o_img)
+    random_bot(board, player_turn, x_img, o_img)
 
 
 def main():
@@ -165,11 +167,11 @@ def main():
                 sys.exit()
             if player_turn == "X":
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    board, player_turn= add_OX(player_turn, board, X_IMG, O_IMG)
+                    board, player_turn = add_OX(player_turn, board, X_IMG, O_IMG)
                     win = check_win(board)
                     win_output(win)
             else:
-                bot(board, player_turn, X_IMG, O_IMG)
+                random_bot(board, player_turn, X_IMG, O_IMG)
                 player_turn = change_Turn(player_turn)
                 win = check_win(board)
                 win_output(win)
