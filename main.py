@@ -106,49 +106,77 @@ def random_bot(board, player_turn, x_img, o_img):
     renderer(board, x_img, o_img)
 
 
-def intelli_bot(board, player_turn, x_img, o_img):
-    information = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+def c(board, coord_x, coord_y, player_turn, call_nr, check_nr):
+    if call_nr == 0:
+        if check_nr == 0:
+            if board[coord_x][coord_y] == player_turn:
+                return True
+        if check_nr == 1:
+            if board[coord_x][coord_y] == player_turn:
+                return True
+        if check_nr == 2:
+            if board[coord_x][len(board[0])-1 - coord_y] == player_turn:
+                return True
+    if call_nr == 1:
+        if check_nr == 0:
+            if board[coord_x][coord_y] != player_turn and board[coord_x][coord_y] is not None:
+                return True
+        if check_nr == 1:
+            if board[coord_x][coord_y] != player_turn and board[coord_x][coord_y] is not None:
+                return  True
+        if check_nr == 2:
+            if board[coord_x][len(board[0]) - 1 - coord_y] != player_turn and board[coord_x][len(board[0]) - 1 - coord_y] is not None:
+                return True
+    return False
 
+def find_a_move(board, player_turn, x_img, o_img, call_nr):
+    information = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
     for row in range(0, 3):
         for col in range(0, 3):
-            if board[row][col] != player_turn and board[row][col] is not None:
+            if c(board, row, col, player_turn, call_nr, 0):
                 information[0][row] += 1
             if information[0][row] == 2:
                 for i in range(0, 3):
                     if board[row][i] is None:
                         board[row][i] = player_turn
                         renderer(board, x_img, o_img)
-                        return
+                        return False
 
     for col in range(0, 3):
         for row in range(0, 3):
-            if board[row][col] != player_turn and board[row][col] is not None:
+            if c(board, row, col, player_turn, call_nr, 0):
                 information[1][col] += 1
             if information[1][col] == 2:
                 for i in range(0, 3):
                     if board[i][col] is None:
                         board[i][col] = player_turn
                         renderer(board, x_img, o_img)
-                        return
+                        return False
 
     for diagonal in range(0, 3):
-        if board[diagonal][diagonal] != player_turn and board[diagonal][diagonal] is not None:
+        if c(board, diagonal, diagonal, player_turn, call_nr, 1):
             information[2][0] += 1
         if information[2][0] == 2:
             for i in range(0, 3):
                 if board[i][i] is None:
                     board[i][i] = player_turn
                     renderer(board, x_img, o_img)
-                    return
-        if board[diagonal][len(board[0])-1 - diagonal] != player_turn and board[diagonal][len(board[0])-1 - diagonal] is not None:
+                    return False
+        if c(board, diagonal, diagonal, player_turn, call_nr, 2):
             information[2][1] += 1
         if information[2][1] == 2:
             for i in range(0, 3):
                 if board[i][len(board[0])-1 - i] is None:
                     board[i][len(board[0])-1 - i] = player_turn
                     renderer(board, x_img, o_img)
-                    return
-    random_bot(board, player_turn, x_img, o_img)
+                    return False
+    return True
+
+
+def intelli_bot(board, player_turn, x_img, o_img):
+    if find_a_move(board, player_turn, x_img, o_img, 0):
+        if find_a_move(board, player_turn, x_img, o_img, 1):
+            random_bot(board, player_turn, x_img, o_img)
 
 
 def main():
@@ -170,7 +198,6 @@ def main():
                     win = check_win(board)
                     win_output(win)
             else:
-                # random_bot(board, player_turn, X_IMG, O_IMG)
                 intelli_bot(board, player_turn, X_IMG, O_IMG)
                 player_turn = change_Turn(player_turn)
                 win = check_win(board)
