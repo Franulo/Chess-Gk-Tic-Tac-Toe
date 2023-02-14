@@ -140,8 +140,9 @@ def give_correct_if(board, coord_x, coord_y, player_turn, call_nr, check_nr):
 
 
 # A function that looks for 2 O or X in one row, colum or diagonal and places the a O or X to allow the bot to eather win (priority) or stop the player form winning if called
+# you do not have to look at this, its a mess
 def find_a_move(board, player_turn, x_img, o_img, call_nr):  # The first call_nr looks for wins and the second for loses
-    information = [[0, 0, 0], [0, 0, 0], [0, 0]]
+    information = [[0, 0, 0], [0, 0, 0], [0, 0]]  # An array that saves how much same icones are in one row, colum and diagonal
     for row in range(0, 3):
         for col in range(0, 3):
             if give_correct_if(board, row, col, player_turn, call_nr, 0):
@@ -186,9 +187,9 @@ def find_a_move(board, player_turn, x_img, o_img, call_nr):  # The first call_nr
 
 # A function that uses the function find_a_move and if that function doesn't find anything calls the random_bot function if called
 def intelli_bot(board, player_turn, x_img, o_img):
-    if find_a_move(board, player_turn, x_img, o_img, 0):
-        if find_a_move(board, player_turn, x_img, o_img, 1):
-            random_bot(board, player_turn, x_img, o_img)
+    if find_a_move(board, player_turn, x_img, o_img, 0):  # If there is a way to win set icon there
+        if find_a_move(board, player_turn, x_img, o_img, 1):  # If there is a way to lose set icon there
+            random_bot(board, player_turn, x_img, o_img) # Set a icon in a random free field
 
 
 # The main function is the function that gets called at the start of the programm
@@ -197,28 +198,28 @@ def intelli_bot(board, player_turn, x_img, o_img):
 # It allows to close the game and stop the programm by hitting esc or the red x
 # It reacts if the player clicks a mousebutton
 def main():
-    SCREEN.fill(BACK_COLOR)
-    SCREEN.blit(BOARD, (64, 64))
+    SCREEN.fill(BACK_COLOR)  # Fill screen with the background color
+    SCREEN.blit(BOARD, (64, 64))  # "draws" the board
 
-    player_turn = "X"
-    board = [[None, None, None], [None, None, None], [None, None, None]]
-    pygame.display.update()
+    player_turn = "X"  # The player turn at the beginning of the game
+    board = [[None, None, None], [None, None, None], [None, None, None]]  # Initialise the board
+    pygame.display.update()  # Update the screen
 
-    while True:
-        for event in pygame.event.get():
+    while True:  # infinite loop
+        for event in pygame.event.get():  # Get events from the queue https://www.pygame.org/docs/ref/event.html
             if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 pygame.quit()  # Uninitialize all pygame modules
-                sys.exit()
-            if player_turn == "X":
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    board, player_turn = add_OX(player_turn, board, X_IMG, O_IMG)
-                    win = check_win(board)
-                    end_of_game(win)
-            else:
-                intelli_bot(board, player_turn, X_IMG, O_IMG)
-                player_turn = change_Turn(player_turn)
-                win = check_win(board)
-                end_of_game(win)
+                sys.exit()  # Exit the programm
+            if player_turn == "X":  # Player gets to play
+                if event.type == pygame.MOUSEBUTTONDOWN:  # If the mousebutton is clicked
+                    board, player_turn = add_OX(player_turn, board, X_IMG, O_IMG)  # Call the add_OX function
+                    win = check_win(board)  # Find a win and save it in 'win'
+                    end_of_game(win)  # Put out the win massage and restart the game after delay
+            else:  # Bot gets to play
+                intelli_bot(board, player_turn, X_IMG, O_IMG)  # Call the intelli_bot function
+                player_turn = change_Turn(player_turn)  # Change the player turn
+                win = check_win(board)  # Find a win and save it in 'win'
+                end_of_game(win)  # Put out the win massage and restart the game after delay
 
 
 # calls the function main at the beginning
