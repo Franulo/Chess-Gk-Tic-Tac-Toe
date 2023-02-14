@@ -106,7 +106,7 @@ def random_bot(board, player_turn, x_img, o_img):
     renderer(board, x_img, o_img)
 
 
-def c(board, coord_x, coord_y, player_turn, call_nr, check_nr):
+def give_correct_if_statement(board, coord_x, coord_y, player_turn, call_nr, check_nr):
     if call_nr == 0:
         if check_nr == 0:
             if board[coord_x][coord_y] == player_turn:
@@ -133,7 +133,7 @@ def find_a_move(board, player_turn, x_img, o_img, call_nr):
     information = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
     for row in range(0, 3):
         for col in range(0, 3):
-            if c(board, row, col, player_turn, call_nr, 0):
+            if give_correct_if_statement(board, row, col, player_turn, call_nr, 0):
                 information[0][row] += 1
             if information[0][row] == 2:
                 for i in range(0, 3):
@@ -144,7 +144,7 @@ def find_a_move(board, player_turn, x_img, o_img, call_nr):
 
     for col in range(0, 3):
         for row in range(0, 3):
-            if c(board, row, col, player_turn, call_nr, 0):
+            if give_correct_if_statement(board, row, col, player_turn, call_nr, 0):
                 information[1][col] += 1
             if information[1][col] == 2:
                 for i in range(0, 3):
@@ -154,7 +154,7 @@ def find_a_move(board, player_turn, x_img, o_img, call_nr):
                         return False
 
     for diagonal in range(0, 3):
-        if c(board, diagonal, diagonal, player_turn, call_nr, 1):
+        if give_correct_if_statement(board, diagonal, diagonal, player_turn, call_nr, 1):
             information[2][0] += 1
         if information[2][0] == 2:
             for i in range(0, 3):
@@ -162,7 +162,7 @@ def find_a_move(board, player_turn, x_img, o_img, call_nr):
                     board[i][i] = player_turn
                     renderer(board, x_img, o_img)
                     return False
-        if c(board, diagonal, diagonal, player_turn, call_nr, 2):
+        if give_correct_if_statement(board, diagonal, diagonal, player_turn, call_nr, 2):
             information[2][1] += 1
         if information[2][1] == 2:
             for i in range(0, 3):
