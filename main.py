@@ -129,6 +129,7 @@ def give_correct_if_statement(board, coord_x, coord_y, player_turn, call_nr, che
                 return True
     return False
 
+
 def find_a_move(board, player_turn, x_img, o_img, call_nr):
     information = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
     for row in range(0, 3):
