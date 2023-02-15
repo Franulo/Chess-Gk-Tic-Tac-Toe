@@ -7,14 +7,14 @@ import math
 
 pygame.init()  # Initialize all imported pygame modules
 
-WIDTH = 900  # Width of the screen
+SIZE = 900  # Size of the screen
 BACK_COLOR = (100, 100, 100)  # Background Color
 
 BOARD = pygame.image.load("assets/Board.png")  # Load the grafic of the game board
 X_IMG = pygame.image.load("assets/X.png")  # Load the grafic of the X
 O_IMG = pygame.image.load("assets/O.png")  # Load the grafic of the O
 
-SCREEN = pygame.display.set_mode((WIDTH, WIDTH))  # Initialize a window or screen for display
+SCREEN = pygame.display.set_mode((SIZE, SIZE))  # Initialize a window or screen for display
 
 pygame.display.set_caption("Tic Tac Toe")  # Set the current window caption
 
@@ -23,24 +23,28 @@ pygame.display.set_caption("Tic Tac Toe")  # Set the current window caption
 def generate_massage(massage):
     main_font = pygame.font.SysFont("Roboto", 90)  # Create a Font object from the system fonts
     _massage = main_font.render(massage, True, "white", "Red")
-    _massage_rect = _massage.get_rect(center=(WIDTH / 2, WIDTH / 2))  # Get the rectangular area of the Surface
+    _massage_rect = _massage.get_rect(center=(SIZE / 2, SIZE / 2))  # Get the rectangular area of the Surface
     SCREEN.blit(_massage, _massage_rect)  # Blit the surface, "draw on the surface"
 
 
 # A function that adds an X or O to where the player clicked and renders it in to the game by calling the renderer function if called
 def add_OX(player_turn, board,  x_img, o_img):
     current_pos = pygame.mouse.get_pos()  # Get the position of the mouse
-    converted_x = (current_pos[0]) / 900 * 3  # Convert it in to for the programm useful values -65 / 835 *2
-    converted_y = (current_pos[1]) / 900 * 3
-    if board[math.floor(converted_y)][math.floor(converted_x)] != 'O' and board[math.floor(converted_y)][math.floor(converted_x)] != 'X':  # If the field in the board is free
-        board[math.floor(converted_y)][math.floor(converted_x)] = player_turn  # Set the current players icon (X or O) into this field
-        player_turn = change_Turn(player_turn)  # Change the players turn
-        renderer(board,x_img, o_img)  # Render the changes
+    converted_x = math.floor(current_pos[0] / 900 * 3)  # Convert it in to for the programm useful values -65 / 835 *2
+    converted_y = math.floor(current_pos[1] / 900 * 3)
+    if converted_x == 3: # 'edge case'
+        converted_x = 2
+    if converted_y == 3: # 'edge case'
+        converted_y = 2
+    if board[converted_y][converted_x] != 'O' and board[converted_y][converted_x] != 'X':  # If the field in the board is free
+        board[converted_y][converted_x] = player_turn  # Set the current players icon (X or O) into this field
+        player_turn = other_player_turn(player_turn)  # Change the players turn
+        renderer(board, x_img, o_img)  # Render the changes
     return board, player_turn
 
 
 # A function that changes the player Turn when called
-def change_Turn(player_turn):
+def other_player_turn(player_turn):
     if player_turn == 'O':
         player_turn = 'X'
     else:
@@ -98,9 +102,9 @@ def end_of_game(output):
             generate_massage("O wins")
         if output == "DRAW":
             generate_massage("DRAW")
-        pygame.display.update()  #Updates the display
+        pygame.display.update()  # Updates the display
         time.sleep(2)  # Makes the programm sleep for 2sek
-        main()  #Calls the main function (restarts the game)
+        main()  # Calls the main function (restarts the game)
 
 
 # A function that sets a X or O to a random spot on the board if called
@@ -125,7 +129,7 @@ def give_correct_if(board, coord_x, coord_y, player_turn, call_nr, check_nr):
             if board[coord_x][coord_y] == player_turn:
                 return True
         if check_nr == 2:
-            if board[coord_x][len(board[0])-1 - coord_y] == player_turn:
+            if board[coord_x][len(board[0]) - 1 - coord_y] == player_turn:
                 return True
     if call_nr == 1:
         if check_nr == 0:
@@ -133,7 +137,7 @@ def give_correct_if(board, coord_x, coord_y, player_turn, call_nr, check_nr):
                 return True
         if check_nr == 1:
             if board[coord_x][coord_y] != player_turn and board[coord_x][coord_y] is not None:
-                return  True
+                return True
         if check_nr == 2:
             if board[coord_x][len(board[0]) - 1 - coord_y] != player_turn and board[coord_x][len(board[0]) - 1 - coord_y] is not None:
                 return True
@@ -144,6 +148,7 @@ def give_correct_if(board, coord_x, coord_y, player_turn, call_nr, check_nr):
 # you do not have to look at this, its a mess
 def find_a_move(board, player_turn, x_img, o_img, call_nr):  # The first call_nr looks for wins and the second for loses
     information = [[0, 0, 0], [0, 0, 0], [0, 0]]  # An array that saves how much same icones are in one row, colum and diagonal
+
     for row in range(0, 3):
         for col in range(0, 3):
             if give_correct_if(board, row, col, player_turn, call_nr, 0):
@@ -202,7 +207,7 @@ def intelli_bot(board, player_turn, x_img, o_img):
                 board[1][0] = player_turn
                 renderer(board, x_img, o_img)
                 return
-            random_bot(board, player_turn, x_img, o_img) # Set a icon in a random free field
+            random_bot(board, player_turn, x_img, o_img)  # Set a icon in a random free field
 
 
 # The main function is the function that gets called at the start of the programm
@@ -225,12 +230,12 @@ def main():
                 sys.exit()  # Exit the programm
             if player_turn == "X":  # Player gets to play
                 if event.type == pygame.MOUSEBUTTONDOWN:  # If the mousebutton is clicked
-                    board, player_turn = add_OX(player_turn, board, X_IMG, O_IMG)  # Call the add_OX function
+                    board, player_turn = add_OX(player_turn, board, X_IMG, O_IMG)
                     win = check_win(board)  # Find a win and save it in 'win'
                     end_of_game(win)  # Put out the win massage and restart the game after delay
             else:  # Bot gets to play
                 intelli_bot(board, player_turn, X_IMG, O_IMG)  # Call the intelli_bot function
-                player_turn = change_Turn(player_turn)  # Change the player turn
+                player_turn = other_player_turn(player_turn)  # Change the player turn
                 win = check_win(board)  # Find a win and save it in 'win'
                 end_of_game(win)  # Put out the win massage and restart the game after delay
 
