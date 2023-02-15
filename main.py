@@ -3,6 +3,7 @@ import pygame
 import sys
 import time
 import random
+import math
 
 pygame.init()  # Initialize all imported pygame modules
 
@@ -29,10 +30,10 @@ def generate_massage(massage):
 # A function that adds an X or O to where the player clicked and renders it in to the game by calling the renderer function if called
 def add_OX(player_turn, board,  x_img, o_img):
     current_pos = pygame.mouse.get_pos()  # Get the position of the mouse
-    converted_x = (current_pos[0] - 65) / 835 * 2  # Convert it in to for the programm useful values
-    converted_y = current_pos[1] / 835 * 2
-    if board[round(converted_y)][round(converted_x)] != 'O' and board[round(converted_y)][round(converted_x)] != 'X':  # If the field in the board is free
-        board[round(converted_y)][round(converted_x)] = player_turn  # Set the current players icon (X or O) into this field
+    converted_x = (current_pos[0]) / 900 * 3  # Convert it in to for the programm useful values -65 / 835 *2
+    converted_y = (current_pos[1]) / 900 * 3
+    if board[math.floor(converted_y)][math.floor(converted_x)] != 'O' and board[math.floor(converted_y)][math.floor(converted_x)] != 'X':  # If the field in the board is free
+        board[math.floor(converted_y)][math.floor(converted_x)] = player_turn  # Set the current players icon (X or O) into this field
         player_turn = change_Turn(player_turn)  # Change the players turn
         renderer(board,x_img, o_img)  # Render the changes
     return board, player_turn
@@ -187,8 +188,20 @@ def find_a_move(board, player_turn, x_img, o_img, call_nr):  # The first call_nr
 
 # A function that uses the function find_a_move and if that function doesn't find anything calls the random_bot function if called
 def intelli_bot(board, player_turn, x_img, o_img):
+    if board[1][1] is None and player_turn == "O":
+        board[1][1] = player_turn
+        renderer(board, x_img, o_img)
+        return
     if find_a_move(board, player_turn, x_img, o_img, 0):  # If there is a way to win set icon there
         if find_a_move(board, player_turn, x_img, o_img, 1):  # If there is a way to lose set icon there
+            if board[0][1] is None and player_turn == "O":
+                board[0][1] = player_turn
+                renderer(board, x_img, o_img)
+                return
+            elif board[1][0] is None and player_turn == "O":
+                board[1][0] = player_turn
+                renderer(board, x_img, o_img)
+                return
             random_bot(board, player_turn, x_img, o_img) # Set a icon in a random free field
 
 
