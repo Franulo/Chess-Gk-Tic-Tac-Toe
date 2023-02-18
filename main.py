@@ -21,13 +21,14 @@ pygame.display.set_caption("Tic Tac Toe")  # Set the current window caption
 
 # A function that takes in a text and renders it to the game window if called
 def generate_massage(massage):
-    main_font = pygame.font.SysFont("Roboto", 90)  # Create a Font object from the system fonts
+    main_font = pygame.font.SysFont("Roboto", 90)  # Create a Font object from the system fonts, type and size of text
     _massage = main_font.render(massage, True, "white", "Red")
     _massage_rect = _massage.get_rect(center=(SIZE / 2, SIZE / 2))  # Get the rectangular area of the Surface
     SCREEN.blit(_massage, _massage_rect)  # Blit the surface, "draw on the surface"
 
 
-# A function that adds an X or O to where the player clicked and renders it in to the game by calling the renderer function if called
+# A function that adds an X or O to where the player clicked and renders it in to the game
+# by calling the renderer function if called
 def add_OX(player_turn, board,  x_img, o_img):
     current_pos = pygame.mouse.get_pos()  # Get the position of the mouse
     converted_x = math.floor(current_pos[0] / 900 * 3)  # Convert it in to for the programm useful values -65 / 835 *2
@@ -93,7 +94,8 @@ def check_win(board):
         return "DRAW"
 
 
-# A function that gives the texts for the end of the game to the function generate_massage and restarts the game if called
+# A function that gives the texts for the end of the game to the
+# function generate_massage and restarts the game if called
 def end_of_game(output):
     if output is not None:
         if output == 'X':
@@ -144,7 +146,8 @@ def give_correct_if(board, coord_x, coord_y, player_turn, call_nr, check_nr):
     return False
 
 
-# A function that looks for 2 O or X in one row, colum or diagonal and places the a O or X to allow the bot to eather win (priority) or stop the player form winning if called
+# A function that looks for 2 O or X in one row, colum or diagonal and places
+# a O or X to allow the bot to eather win (priority) or stop the player form winning if called
 # you do not have to look at this, its a mess
 def find_a_move(board, player_turn, x_img, o_img, call_nr):  # The first call_nr looks for wins and the second for loses
     information = [[0, 0, 0], [0, 0, 0], [0, 0]]  # An array that saves how much same icones are in one row, colum and diagonal
@@ -191,21 +194,61 @@ def find_a_move(board, player_turn, x_img, o_img, call_nr):  # The first call_nr
     return True
 
 
-# A function that uses the function find_a_move and if that function doesn't find anything calls the random_bot function if called
-def intelli_bot(board, player_turn, x_img, o_img):
+def beginning_strategy_moves(board, player_turn, x_img, o_img):
     if board[1][1] is None and player_turn == "O":
         board[1][1] = player_turn
         renderer(board, x_img, o_img)
+        return True
+    elif board[1][1] is not player_turn and board[0][0] is None and player_turn == "O":
+        board[0][0] = player_turn
+        renderer(board, x_img, o_img)
+        return True
+    return False
+
+
+def mid_game_strategy_moves(board, player_turn, x_img, o_img):
+    if board[0][1] and board[1][0] is not (None and player_turn) and board[0][0] is None:
+        board[0][0] = player_turn
+        renderer(board, x_img, o_img)
+        return True
+    if board[0][1] and board[1][2] is not (None and player_turn) and board[0][2] is None:
+        board[0][2] = player_turn
+        renderer(board, x_img, o_img)
+        return True
+    if board[2][1] and board[1][0] is not (None and player_turn) and board[2][0] is None:
+        board[2][0] = player_turn
+        renderer(board, x_img, o_img)
+        return True
+    if board[2][1] and board[1][2] is not (None and player_turn) and board[2][2] is None:
+        board[2][2] = player_turn
+        renderer(board, x_img, o_img)
+        return True
+    if board[1][1] == player_turn:
+        if board[0][1] is None and player_turn == "O":
+            board[0][1] = player_turn
+            renderer(board, x_img, o_img)
+            return True
+        elif board[1][0] is None and player_turn == "O":
+            board[1][0] = player_turn
+            renderer(board, x_img, o_img)
+            return True
+    if board[1][1] != player_turn:
+        if board[0][2] is None:
+            board[0][2] = player_turn
+            renderer(board, x_img, o_img)
+            return True
+
+    return False
+
+
+# A function that uses the function find_a_move and if that function doesn't
+# find anything calls the random_bot function if called
+def intelli_bot(board, player_turn, x_img, o_img):
+    if beginning_strategy_moves(board, player_turn, x_img, o_img):
         return
     if find_a_move(board, player_turn, x_img, o_img, 0):  # If there is a way to win set icon there
         if find_a_move(board, player_turn, x_img, o_img, 1):  # If there is a way to lose set icon there
-            if board[0][1] is None and player_turn == "O":
-                board[0][1] = player_turn
-                renderer(board, x_img, o_img)
-                return
-            elif board[1][0] is None and player_turn == "O":
-                board[1][0] = player_turn
-                renderer(board, x_img, o_img)
+            if mid_game_strategy_moves(board, player_turn, x_img, o_img):
                 return
             random_bot(board, player_turn, x_img, o_img)  # Set a icon in a random free field
 
@@ -227,7 +270,7 @@ def main():
         for event in pygame.event.get():  # Get events from the queue https://www.pygame.org/docs/ref/event.html
             if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 pygame.quit()  # Uninitialize all pygame modules
-                sys.exit()  # Exit the programm
+                sys.exit()  # Exit the program
             if player_turn == "X":  # Player gets to play
                 if event.type == pygame.MOUSEBUTTONDOWN:  # If the mousebutton is clicked
                     board, player_turn = add_OX(player_turn, board, X_IMG, O_IMG)
