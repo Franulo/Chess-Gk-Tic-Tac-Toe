@@ -10,9 +10,9 @@ pygame.init()  # Initialize all imported pygame modules
 SIZE = 900  # Size of the screen
 BACK_COLOR = (100, 100, 100)  # Background Color
 
-BOARD = pygame.image.load("assets/Board.png")  # Load the grafic of the game board
-X_IMG = pygame.image.load("assets/X.png")  # Load the grafic of the X
-O_IMG = pygame.image.load("assets/O.png")  # Load the grafic of the O
+BOARD = pygame.image.load("assets/Board.png")  # Load the graphic of the game board
+X_IMG = pygame.image.load("assets/X.png")  # Load the graphic of the X
+O_IMG = pygame.image.load("assets/O.png")  # Load the graphic of the O
 
 SCREEN = pygame.display.set_mode((SIZE, SIZE))  # Initialize a window or screen for display
 
@@ -31,11 +31,11 @@ def generate_massage(massage):
 # by calling the renderer function if called
 def add_OX(player_turn, board,  x_img, o_img):
     current_pos = pygame.mouse.get_pos()  # Get the position of the mouse
-    converted_x = math.floor(current_pos[0] / 900 * 3)  # Convert it in to for the programm useful values -65 / 835 *2
+    converted_x = math.floor(current_pos[0] / 900 * 3)  # Convert it in to for the program useful values -65 / 835 *2
     converted_y = math.floor(current_pos[1] / 900 * 3)
-    if converted_x == 3: # 'edge case'
+    if converted_x == 3:  # 'edge case'
         converted_x = 2
-    if converted_y == 3: # 'edge case'
+    if converted_y == 3:  # 'edge case'
         converted_y = 2
     if board[converted_y][converted_x] != 'O' and board[converted_y][converted_x] != 'X':  # If the field in the board is free
         board[converted_y][converted_x] = player_turn  # Set the current players icon (X or O) into this field
@@ -69,11 +69,11 @@ def renderer(board, x_img, o_img):
 def check_win(board):
     winner = None
     for row in range(0, 3):  # For the rows
-        if (board[row][0] == board[row][1] == board[row][2]) and (board[row][0] is not None): # If one row is full with the same icons
+        if (board[row][0] == board[row][1] == board[row][2]) and (board[row][0] is not None):  # If one row is filled with the same icons
             winner = board[row][0]  # The winner is the one that set the icons
             return winner
 
-    for col in range(0, 3):  # For the colums
+    for col in range(0, 3):  # For the columns
         if (board[0][col] == board[1][col] == board[2][col]) and (board[0][col] is not None):
             winner = board[0][col]
             return winner
@@ -105,11 +105,11 @@ def end_of_game(output):
         if output == "DRAW":
             generate_massage("DRAW")
         pygame.display.update()  # Updates the display
-        time.sleep(2)  # Makes the programm sleep for 2sek
+        time.sleep(2)  # Makes the program sleep for 2sek
         main()  # Calls the main function (restarts the game)
 
 
-# A function that sets a X or O to a random spot on the board if called
+# A function that sets an X or O to a random spot on the board if called
 def random_bot(board, player_turn, x_img, o_img):
     random_number1 = random.randrange(0, len(board))  # Generates a random number form 0 to 3
     random_number2 = random.randrange(0, len(board))
@@ -121,7 +121,7 @@ def random_bot(board, player_turn, x_img, o_img):
     renderer(board, x_img, o_img)
 
 
-# A assisting function that gives the find_a_move function the needed requirement in called
+# An assisting function that gives the find_a_move function the needed requirement in called
 def give_correct_if(board, coord_x, coord_y, player_turn, call_nr, check_nr):
     if call_nr == 0:
         if check_nr == 0:
@@ -141,16 +141,16 @@ def give_correct_if(board, coord_x, coord_y, player_turn, call_nr, check_nr):
             if board[coord_x][coord_y] != player_turn and board[coord_x][coord_y] is not None:
                 return True
         if check_nr == 2:
-            if board[coord_x][len(board[0]) - 1 - coord_y] != player_turn and board[coord_x][len(board[0]) - 1 - coord_y] is not None:
+            if board[coord_x][len(board[0])-1 - coord_y] != player_turn and board[coord_x][len(board[0])-1 - coord_y] is not None:
                 return True
     return False
 
 
 # A function that looks for 2 O or X in one row, colum or diagonal and places
-# a O or X to allow the bot to eather win (priority) or stop the player form winning if called
-# you do not have to look at this, its a mess
+# a O or X to allow the bot to either win (priority) or stop the player form winning if called
+# you do not have to look at this, it's a mess
 def find_a_move(board, player_turn, x_img, o_img, call_nr):  # The first call_nr looks for wins and the second for loses
-    information = [[0, 0, 0], [0, 0, 0], [0, 0]]  # An array that saves how much same icones are in one row, colum and diagonal
+    information = [[0, 0, 0], [0, 0, 0], [0, 0]]  # An array that saves how much same icons are in one row, colum and diagonal
 
     for row in range(0, 3):
         for col in range(0, 3):
@@ -250,14 +250,14 @@ def intelli_bot(board, player_turn, x_img, o_img):
         if find_a_move(board, player_turn, x_img, o_img, 1):  # If there is a way to lose set icon there
             if mid_game_strategy_moves(board, player_turn, x_img, o_img):
                 return
-            random_bot(board, player_turn, x_img, o_img)  # Set a icon in a random free field
+            random_bot(board, player_turn, x_img, o_img)  # Set an icon in a random free field
 
 
-# The main function is the function that gets called at the start of the programm
+# The main function is the function that gets called at the start of the program
 # It sets up what wasn't already set up and has a while True loop(infinite loop)
-# Calls all the other functions and reacts to all things the player does
-# It allows to close the game and stop the programm by hitting esc or the red x
-# It reacts if the player clicks a mousebutton
+# Calls all the other functions and reacts to all things the player does.
+# It allows to close the game and stop the program by hitting esc or the red x
+# It reacts if the player clicks a mouse button
 def main():
     SCREEN.fill(BACK_COLOR)  # Fill screen with the background color
     SCREEN.blit(BOARD, (64, 64))  # "draws" the board
@@ -272,7 +272,7 @@ def main():
                 pygame.quit()  # Uninitialize all pygame modules
                 sys.exit()  # Exit the program
             if player_turn == "X":  # Player gets to play
-                if event.type == pygame.MOUSEBUTTONDOWN:  # If the mousebutton is clicked
+                if event.type == pygame.MOUSEBUTTONDOWN:  # If the mouse button is clicked
                     board, player_turn = add_OX(player_turn, board, X_IMG, O_IMG)
                     win = check_win(board)  # Find a win and save it in 'win'
                     end_of_game(win)  # Put out the win massage and restart the game after delay
