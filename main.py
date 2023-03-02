@@ -4,6 +4,8 @@ import sys
 import time
 import random
 import math
+import numpy as np
+import copy
 
 pygame.init()  # Initialize all imported pygame modules
 
@@ -25,23 +27,6 @@ def generate_massage(massage):
     _massage = main_font.render(massage, True, "white", "Red")
     _massage_rect = _massage.get_rect(center=(SIZE / 2, SIZE / 2))  # Get the rectangular area of the Surface
     SCREEN.blit(_massage, _massage_rect)  # Blit the surface, "draw on the surface"
-
-
-# A function that adds an X or O to where the player clicked and renders it in to the game
-# by calling the renderer function if called
-def add_OX(player_turn, board,  x_img, o_img):
-    current_pos = pygame.mouse.get_pos()  # Get the position of the mouse
-    converted_x = math.floor(current_pos[0] / 900 * 3)  # Convert it in to for the program useful values -65 / 835 *2
-    converted_y = math.floor(current_pos[1] / 900 * 3)
-    if converted_x == 3:  # 'edge case'
-        converted_x = 2
-    if converted_y == 3:  # 'edge case'
-        converted_y = 2
-    if board[converted_y][converted_x] != 'O' and board[converted_y][converted_x] != 'X':  # If the field in the board is free
-        board[converted_y][converted_x] = player_turn  # Set the current players icon (X or O) into this field
-        player_turn = other_player_turn(player_turn)  # Change the players turn
-        renderer(board, x_img, o_img)  # Render the changes
-    return board, player_turn
 
 
 # A function that changes the player Turn when called
@@ -107,6 +92,23 @@ def end_of_game(output):
         pygame.display.update()  # Updates the display
         time.sleep(2)  # Makes the program sleep for 2sek
         main()  # Calls the main function (restarts the game)
+
+
+# A function that adds an X or O to where the player clicked and renders it in to the game
+# by calling the renderer function if called
+def add_OX(player_turn, board,  x_img, o_img):
+    current_pos = pygame.mouse.get_pos()  # Get the position of the mouse
+    converted_x = math.floor(current_pos[0] / 900 * 3)  # Convert it in to for the program useful values -65 / 835 *2
+    converted_y = math.floor(current_pos[1] / 900 * 3)
+    if converted_x == 3:  # 'edge case'
+        converted_x = 2
+    if converted_y == 3:  # 'edge case'
+        converted_y = 2
+    if board[converted_y][converted_x] != 'O' and board[converted_y][converted_x] != 'X':  # If the field in the board is free
+        board[converted_y][converted_x] = player_turn  # Set the current players icon (X or O) into this field
+        player_turn = other_player_turn(player_turn)  # Change the players turn
+        renderer(board, x_img, o_img)  # Render the changes
+    return board, player_turn
 
 
 # A function that sets an X or O to a random spot on the board if called
@@ -194,6 +196,7 @@ def find_a_move(board, player_turn, x_img, o_img, call_nr):  # The first call_nr
     return True
 
 
+# A set of moves for the beginning of the game
 def beginning_strategy_moves(board, player_turn, x_img, o_img):
     if board[1][1] is None and player_turn == "O":
         board[1][1] = player_turn
@@ -206,6 +209,7 @@ def beginning_strategy_moves(board, player_turn, x_img, o_img):
     return False
 
 
+# A set of moves during the game
 def mid_game_strategy_moves(board, player_turn, x_img, o_img):
     if board[0][1] and board[1][0] is not (None and player_turn) and board[0][0] is None:
         board[0][0] = player_turn
@@ -253,6 +257,76 @@ def intelli_bot(board, player_turn, x_img, o_img):
             random_bot(board, player_turn, x_img, o_img)  # Set an icon in a random free field
 
 
+# Bot we had last lesson
+def compMove(board, player_turn):
+    possibleMoves = []
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board[i][j] is None:
+                possibleMoves.append(i*3+j)
+    bestScore = -1000
+    bestMove = 0
+
+    boardCopy = copy.deepcopy(board)
+
+    for move in possibleMoves:
+        j = move % 3
+        i = (move - j)//3
+        boardCopy[i][j] = player_turn
+        # Bewertung durch MiniMax-Algorithmus
+        score = minimax(boardCopy, 0, False, player_turn)
+        if score > bestScore:
+            bestScore = score
+            bestMove = move
+        boardCopy[i][j] = None
+
+    j = bestMove % 3
+    i = (bestMove - j) // 3
+    board[i][j] = player_turn
+
+
+def minimax(currBoard, depth, isMaximizing, player_turn):
+    # terminal states
+    if check_win(currBoard) == "DRAW":
+        return 0
+    elif check_win(currBoard) is not None and check_win(currBoard) != player_turn:
+        return -1
+    elif check_win(currBoard) == player_turn:
+        return 1
+    # recursive minimax
+    possibleMoves = []
+    for i in range(len(currBoard)):
+        for j in range(len(currBoard[i])):
+            if currBoard[i][j] is None:
+                possibleMoves.append(i * 3 + j)
+
+    #boardCopy = currBoard.copy() ?Ds
+
+    if isMaximizing:
+
+        # -1000 is like -infinity in this case
+        bestScore = -1000
+        for move in possibleMoves:
+            j = move % 3
+            i = (move - j)//3
+            currBoard[i][j] = player_turn
+            score = minimax(currBoard, depth + 1, False, player_turn)
+            currBoard[i][j] = None
+            bestScore = np.maximum(score, bestScore)
+        return bestScore
+
+    else:
+        bestScore = 1000
+        for move in possibleMoves:
+            j = move % 3
+            i = (move - j)//3
+            currBoard[i][j] = 'X'
+            score = minimax(currBoard, depth + 1, True, player_turn)
+            currBoard[i][j] = None
+            bestScore = np.minimum(score, bestScore)
+        return bestScore
+
+
 # The main function is the function that gets called at the start of the program
 # It sets up what wasn't already set up and has a while True loop(infinite loop)
 # Calls all the other functions and reacts to all things the player does.
@@ -262,6 +336,7 @@ def main():
     SCREEN.fill(BACK_COLOR)  # Fill screen with the background color
     SCREEN.blit(BOARD, (64, 64))  # "draws" the board
 
+    play_Mini_Max = True
     player_turn = "X"  # The player turn at the beginning of the game
     board = [[None, None, None], [None, None, None], [None, None, None]]  # Initialise the board
     pygame.display.update()  # Update the screen
@@ -277,7 +352,11 @@ def main():
                     win = check_win(board)  # Find a win and save it in 'win'
                     end_of_game(win)  # Put out the win massage and restart the game after delay
             else:  # Bot gets to play
-                intelli_bot(board, player_turn, X_IMG, O_IMG)  # Call the intelli_bot function
+                if play_Mini_Max:
+                    compMove(board, player_turn)
+                    renderer(board, X_IMG, O_IMG)
+                else:
+                    intelli_bot(board, player_turn, X_IMG, O_IMG)  # Call the intelli_bot function
                 player_turn = other_player_turn(player_turn)  # Change the player turn
                 win = check_win(board)  # Find a win and save it in 'win'
                 end_of_game(win)  # Put out the win massage and restart the game after delay
