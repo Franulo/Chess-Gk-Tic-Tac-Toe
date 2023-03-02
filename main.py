@@ -320,7 +320,10 @@ def minimax(currBoard, depth, isMaximizing, player_turn):
         for move in possibleMoves:
             j = move % 3
             i = (move - j)//3
-            currBoard[i][j] = 'X'
+            if player_turn == 'O':
+                currBoard[i][j] = 'X'
+            else:
+                currBoard[i][j] = 'O'
             score = minimax(currBoard, depth + 1, True, player_turn)
             currBoard[i][j] = None
             bestScore = np.minimum(score, bestScore)
