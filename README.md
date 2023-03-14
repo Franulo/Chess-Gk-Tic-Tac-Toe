@@ -3,6 +3,7 @@ A project for a chess lession with pygame.
 
 
 https://www.pygame.org/docs/ref/pygame.html
+Possible exesises:
 1. Ändert wer das Spiel beginnt
 2. Ändert wer X und wer O spielt
 3. Ändert gegen welchem Bot ihr spielt
