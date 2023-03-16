@@ -131,9 +131,9 @@ def compMove(board, player_turn):
 def minimax(currBoard, depth, isMaximizing, player_turn):
     # terminal states
     if check_lose(currBoard) and isMaximizing:
-        return 1
+        return 10-depth
     elif check_lose(currBoard) and not isMaximizing:
-        return -1
+        return -10+depth
 
     # recursive minimax
     possibleMoves = []
