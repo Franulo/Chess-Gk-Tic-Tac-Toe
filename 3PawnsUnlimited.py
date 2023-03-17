@@ -19,7 +19,7 @@ graphical_board = [[W_PAWN, W_PAWN, W_PAWN],
                    [None, None, None],
                    [B_PAWN, B_PAWN, B_PAWN]]
 
-player_turn = "Black"
+player_turn = "White"
 
 
 def synchronizeDigital(abstract_board):
@@ -35,11 +35,18 @@ def synchronizeDigital(abstract_board):
 
 
 def check_win():
+    w_count = 0
+    b_count = 0
     for i in range(0, 3):
-        if graphical_board[0][i] == B_PAWN:
-            return 'Black'
-        if graphical_board[2][i] == W_PAWN:
-            return 'White'
+        for j in range(0, 3):
+            if graphical_board[i][j] == B_PAWN:
+                b_count += 1
+            if graphical_board[i][j] == W_PAWN:
+                w_count += 1
+    if w_count != 0 and b_count == 0:
+        return 'White'
+    if b_count != 0 and w_count == 0:
+        return 'Black'
 
 
 def end_of_game(output):
@@ -67,14 +74,23 @@ def check_movement_rules(selected_row, selected_colum, figure, row, colum, the_b
     if figure == W_PAWN:
         if row == selected_row+1 and colum == selected_colum and the_board[row][colum] is None:
             return True
-        if row == selected_row+1 and (colum == selected_colum-1 or colum == selected_colum+1) and (the_board[row][colum] == B_PAWN or the_board[row][colum] == 'B'):
+        if row == selected_row+1 and (colum == selected_colum-1 or colum == selected_colum+1 or (selected_colum == 0 and colum == 2) or (selected_colum == 2 and colum == 0)) and (the_board[row][colum] == B_PAWN or the_board[row][colum] == 'B'):
             return True
+        if row == 0 and selected_row == 2 and colum == selected_colum and the_board[row][colum] is None:
+            return True
+        if row == 0 and selected_row == 2 and (colum == selected_colum-1 or colum == selected_colum+1 or (selected_colum == 0 and colum == 2) or (selected_colum == 2 and colum == 0)) and (the_board[row][colum] == B_PAWN or the_board[row][colum] == 'B'):
+            return True
+
         # if selected_row == 0 and row == 2 and colum == selected_colum and the_board[row][colum] is None and the_board[1][colum] is None:
             # return True
     if figure == B_PAWN:
         if row == selected_row-1 and colum == selected_colum and the_board[row][colum] is None:
             return True
-        if row == selected_row-1 and (colum == selected_colum-1 or colum == selected_colum+1) and (the_board[row][colum] == W_PAWN or the_board[row][colum] == 'W'):
+        if row == selected_row-1 and (colum == selected_colum-1 or colum == selected_colum+1 or (selected_colum == 0 and colum == 2) or (selected_colum == 2 and colum == 0)) and (the_board[row][colum] == W_PAWN or the_board[row][colum] == 'W'):
+            return True
+        if row == 2 and selected_row == 0 and colum == selected_colum and the_board[row][colum] is None:
+            return True
+        if row == 2 and selected_row == 0 and (colum == selected_colum-1 or colum == selected_colum+1 or (selected_colum == 0 and colum == 2) or (selected_colum == 2 and colum == 0)) and (the_board[row][colum] == W_PAWN or the_board[row][colum] == 'W'):
             return True
         # if selected_row == 2 and row == 0 and colum == selected_colum and the_board[row][colum] is None and the_board[1][colum] is None:
             # return True
